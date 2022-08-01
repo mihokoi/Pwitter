@@ -7,6 +7,20 @@ from django.dispatch import receiver
 from .validators import FileValidator
 
 
+class Picture(models.Model):
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    validate_file = FileValidator(max_size=1024 * 1000,
+                                  content_types=('image/jpeg', 'image/png'))
+    picture = models.FileField(upload_to='pweet_media/',
+                             validators=[validate_file],
+                             blank=True)
+
+
+class Like(models.Model):
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    picture = models.ForeignKey(Picture, on_delete=models.CASCADE, null=True,
+                                blank=True)
+    creates = models.DateTimeField(auto_now_add=True)
 
 
 class Pweet(models.Model):
@@ -14,12 +28,9 @@ class Pweet(models.Model):
                              on_delete=models.DO_NOTHING)
     body = models.CharField(max_length=140)
     created_at = models.DateTimeField(auto_now_add=True)
-    validate_file = FileValidator(max_size=1024*1000,
-                                   content_types=('image/jpeg', 'image/png'))
-    media = models.FileField(upload_to='pweet_media/',
-                             validators=[validate_file],
-                             blank=True)
-    likes = models.IntegerField(blank=True, default=0)
+    picture = models.OneToOneField(Picture, on_delete=models.DO_NOTHING, null=True,
+                                   blank=True)
+
 
     def __str__(self):
         return (
@@ -34,13 +45,10 @@ class PweetReply(models.Model):
                              on_delete=models.DO_NOTHING)
     body = models.CharField(max_length=140)
     created_at = models.DateTimeField(auto_now_add=True)
-    validate_file = FileValidator(max_size=1024 * 1000,
-                                  content_types=('image/jpeg', 'image/png'))
-    media = models.FileField(upload_to='pweet_media/',
-                             validators=[validate_file],
-                             blank=True)
-    likes = models.IntegerField(blank=True, default=0)
+    picture = models.OneToOneField(Picture, on_delete=models.DO_NOTHING, null=True,
+                                   blank=True)
     reply = models.ForeignKey(Pweet, on_delete=models.DO_NOTHING, related_name='replies')
+
 
     def __str__(self):
         return (
