@@ -28,8 +28,13 @@ class Pweet(models.Model):
                              on_delete=models.DO_NOTHING)
     body = models.CharField(max_length=140)
     created_at = models.DateTimeField(auto_now_add=True)
+    validate_file = FileValidator(max_size=1024 * 1000,
+                                  content_types=('image/jpeg', 'image/png'))
+    pweet_image = models.FileField(upload_to='pweet_media/',
+                                  validators=[validate_file],
+                                  blank=True)
     picture = models.OneToOneField(Picture, on_delete=models.DO_NOTHING, null=True,
-                                   blank=True)
+                                   )
 
 
     def __str__(self):

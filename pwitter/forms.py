@@ -1,6 +1,6 @@
 from django import forms
-from .models import Pweet
-
+from .models import Pweet, Picture
+from .widgets import PictureWidget
 
 class PweetForm(forms.ModelForm):
     body = forms.CharField(required=True,
@@ -12,7 +12,17 @@ class PweetForm(forms.ModelForm):
                            ),
                            label="",
                            )
-
     class Meta:
         model = Pweet
-        exclude = ("user",)
+        exclude = ("user", "picture")
+
+
+
+class PictureForm(forms.ModelForm):
+
+    class Meta:
+        model = Picture
+        exclude = ('user',)
+
+
+

@@ -1,8 +1,31 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.forms import formset_factory
 from django.views.generic import TemplateView
 from .models import Profile
-from .forms import PweetForm
+from .forms import PweetForm, PictureForm
+from django.views.generic import View
+
+
+class DashboardView(View):
+    form_class = PweetForm
+    template_name = 'dashboard.html'
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class(request.POST or None)
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST, request.FILES)
+        if form.is_valid():
+            pweet = form.save(commit=False)
+            pweet.user = request.user
+            pweet.pweet_image = request.FILES
+            pweet.picture = pweet.pweet_image
+            pweet.save()
+            return redirect('pwitter:dashboard')
+        return render(request, self.template_name, {'form': form})
+
 
 
 @login_required
@@ -15,6 +38,8 @@ def dashboard(request):
             pweet = form.save(commit=False)
             pweet.user = request.user
             pweet.save()
+            return redirect("pwitter:dashboard")
+        else:
             return redirect("pwitter:dashboard")
     return render(request, "dashboard.html", {"form": form})
 

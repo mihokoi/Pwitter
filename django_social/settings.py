@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'pwitter',
+    'crispy_forms',
+    'crispy_bulma',
 ]
 
 MIDDLEWARE = [
@@ -131,3 +133,13 @@ LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = 'logout-page'
 MEDIA_ROOT = 'uploads/'
 MEDIA_URL = 'uploads/'
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = (
+    "bootstrap",
+    "uni_form",
+    "bootstrap3",
+    "bootstrap4",
+    "bulma",
+)
+
+CRISPY_TEMPLATE_PACK = "bulma"

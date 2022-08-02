@@ -45,6 +45,32 @@
                                     </a>
                                 </div>
                             </nav>
+                            {% for reply in pweet.replies.all %}
+                                <article class="media">
+                                <figure class="media-left">
+                                    <p class="image is-48x48">
+                                        {% if reply.user.profile.user_image %}
+                                        <img src="{{MEDIA_URL}}{{ reply.user.profile.user_image.name}}" alt="reply_profile_image">
+                                        {% else %}
+                                        <img src="https://bulma.io/images/placeholders/96x96.png"
+                                        alt="Placeholder image">
+                                        {% endif %}
+                                    </p>
+                                </figure>
+                                <div class="media-content">
+                                    <div class="content">
+                                        <p>
+                                            <strong><a href="{% url 'pwitter:profile' reply.user.id %}">{{ reply.user.username }}</a></strong>
+                                            <small>@{{ reply.user.username }}</small>
+                                            <small>{{ reply.created_at }}</small>
+                                            <br>
+                                            {{ reply.body }}
+                                            <small><a>Like</a> · <a>Reply</a></small>
+                                        </p>
+                                    </div>
+                                </div>
+                                </article>
+                            {% endfor %}
                         </div>
                     </article>
                 </div>
@@ -80,7 +106,8 @@
         <div class="block">
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+        {% include 'form.html' %}
+        {{ form }}
         <button class="button is-success is-fullwidth is-medium mt-5"
                 type="submit">Pweet
         </button>
