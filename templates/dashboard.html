@@ -24,6 +24,11 @@
                                     <small>{{ pweet.created_at }}</small>
                                     <br>
                                     {{ pweet.body }}
+                                    {% if pweet.pweet_image %}
+                                    <div class="container">
+                                    <img src="{{ MEDIA_URL }}{{ pweet.pweet_image.name }}">
+                                    </div>
+                                    {% endif %}
                                 </p>
                             </div>
                             <nav class="level is-mobile">
@@ -63,6 +68,7 @@
                                             <strong><a href="{% url 'pwitter:profile' reply.user.id %}">{{ reply.user.username }}</a></strong>
                                             <small>@{{ reply.user.username }}</small>
                                             <small>{{ reply.created_at }}</small>
+
                                             <br>
                                             {{ reply.body }}
                                             <small><a>Like</a> · <a>Reply</a></small>
@@ -104,9 +110,8 @@
             <h2 class="title is-2">Add a Pweet</h2>
         </div>
         <div class="block">
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {% include 'form.html' %}
         {{ form }}
         <button class="button is-success is-fullwidth is-medium mt-5"
                 type="submit">Pweet
