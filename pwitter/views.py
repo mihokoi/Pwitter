@@ -1,10 +1,30 @@
-from django.shortcuts import render, redirect
+from django.contrib.auth import logout
+from django.contrib.auth.forms import PasswordResetForm
+from django.contrib.auth.models import User
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import send_mail, BadHeaderError
+from django.db.models import Q
+from django.http import HttpRequest, HttpResponseRedirect, HttpResponse
+from django.template.loader import render_to_string
+from django.urls import reverse_lazy, reverse
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.forms import formset_factory
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 from django.views.generic import TemplateView
-from .models import Profile, Picture
+from .models import Profile, Picture, Pweet
 from .forms import PweetForm
-from django.views.generic import View
+from django.views.generic import View, ListView
+
+def like_view(request, pk):
+    if request.method == 'POST':
+        pweet = get_object_or_404(Pweet, pk=pk)
+        print(pweet)
+        pweet.likes.add(request.user)
+        print(pweet.likes.all())
+        return redirect('/')
+    return render(request, 'dashboard.html')
 
 
 class DashboardView(View):
@@ -26,6 +46,12 @@ class DashboardView(View):
             return redirect('pwitter:dashboard')
         return render(request, self.template_name, {'form': form})
 
+def pweet_delete(request, pk):
+    pweet = get_object_or_404(Pweet, pk=pk)
+    if request.method == 'POST':
+        pweet.delete()
+        return redirect('/')
+    return render(request, 'dashboard.html')
 
 
 @login_required
@@ -68,5 +94,10 @@ def profile(request, pk):
         current_user_profile.save()
     return render(request, "profile.html", {"profile": profile})
 
-class logout_page(TemplateView):
-    template_name = 'registration/logout.html'
+
+class SignedOutView(TemplateView):
+    template_name = 'registration/signed_out.html'
+
+    def get(self, request: HttpRequest):
+        logout(request)
+        return render(request, self.template_name)

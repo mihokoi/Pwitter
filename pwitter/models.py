@@ -19,12 +19,29 @@ class Pweet(models.Model):
     pweet_image = models.FileField(upload_to='pweet_media/',
                                   validators=[validate_file],
                                   blank=True)
+    likes = models.ManyToManyField(User, related_name='pweet_posts')
     def __str__(self):
         return (
             f"{self.user} "
             f"({self.created_at:%Y-%m-%d %H:%M}): "
             f"{self.body[:30]}..."
         )
+
+
+class PweetReply(models.Model):
+    user = models.ForeignKey(User, related_name="pweets_reply",
+                             on_delete=models.DO_NOTHING)
+    body = models.CharField(max_length=140)
+    created_at = models.DateTimeField(auto_now_add=True)
+    pweet = models.ForeignKey(Pweet, on_delete=models.CASCADE, related_name='replies')
+
+    def __str__(self):
+        return (
+            f"{self.user} "
+            f"({self.created_at:%Y-%m-%d %H:%M}): "
+            f"{self.body[:30]}..."
+        )
+
 
 
 class Picture(models.Model):
@@ -58,30 +75,6 @@ def auto_delete_file_on_change(sender, instance, **kwargs):
         if os.path.isfile(old_picture.path):
             os.remove(old_picture.path)
 
-class Like(models.Model):
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
-    picture = models.ForeignKey(Picture, on_delete=models.CASCADE, null=True,
-                                    blank=True)
-    creates = models.DateTimeField(auto_now_add=True)
-
-
-class PweetReply(models.Model):
-    user = models.ForeignKey(User, related_name="pweets_reply",
-                             on_delete=models.DO_NOTHING)
-    body = models.CharField(max_length=140)
-    created_at = models.DateTimeField(auto_now_add=True)
-    picture = models.OneToOneField(Picture, on_delete=models.DO_NOTHING, null=True,
-                                   blank=True)
-    reply = models.ForeignKey(Pweet, on_delete=models.DO_NOTHING, related_name='replies')
-
-
-    def __str__(self):
-        return (
-            f"{self.user} "
-            f"({self.created_at:%Y-%m-%d %H:%M}): "
-            f"{self.body[:30]}..."
-        )
-
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -106,8 +99,8 @@ def create_profile(sender, instance, created, **kwargs):
     if created:
         user_profile = Profile(user=instance)
         user_profile.save()
-        user_profile.follows.add(instance.profile)
-        # user_profile.follows.set([instance.profile.id])
+        # user_profile.follows.add(instance.profile)
+        user_profile.follows.set([instance.profile.id])
         user_profile.save()
 
 
