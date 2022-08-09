@@ -1,17 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
+{% load static %}
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="{% static 'style.css' %}" />
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
     <title>Dwitter</title>
 </head>
 <body>
 <a href="{% url 'pwitter:dashboard' %}">
 <section class="hero is-small is-success mb-4">
-<div class="hero-body">
-    <h1 class="title is-1">Dwitter</h1>
-    <p class="subtitle is-4">Your tiny social network built with Django</p>
-</div>
+            <div class="hero-body">
+                <div class="columns">
+                    <div class="column">
+                    <h1 class="title is-1">Dwitter</h1>
+                    <p class="subtitle is-4">Your tiny social network built with Django</p>
+                    </div>
+                    {% if user.is_authenticated %}
+                    <div class="column">
+                    <div class="box is-pulled-right">
+                    <article class="media">
+                    <figure class="media-left">
+                    {% if user.profile.user_image %}
+                    <p class="image is-64x64">
+                        <img src="{{ MEDIA_URL }}{{ user.profile.user_image.name }}">
+                    </p>
+                    {% endif %}
+                    </figure>
+                    <div class="media-content">
+                    <div class="content">
+                        <strong>Logged as:</strong>
+                        <br>
+                        <a href="{% url 'pwitter:profile' user.profile.id %}">
+                        <strong class="has-text-black">{{ user.profile.user }}</strong>
+                        </a>
+                    {% endif %}
+                    </div>
+                    </div>
+                    </article>
+                    </div>
+                    </div>
+                    </div>
+
+
+    </div>
+
 </section>
 </a>
     <div class="container">

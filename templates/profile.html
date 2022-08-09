@@ -29,6 +29,14 @@
         </span>
         </div>
         {% endfor %}
+        {% for pweet_reply in profile.user.pweets_reply.all %}
+        <div class="box">
+        {{ pweet_reply.body }}
+        <span class="is-small has-text-grey-light">
+            {{ pweet_reply.created_at }}
+        </span>
+        </div>
+        {% endfor %}
     </div>
     </div>
     </div>

@@ -1,12 +1,18 @@
 from django.urls import path, include
-
-from .views import dashboard, profile_list, profile
+from django.contrib.auth.decorators import login_required
+from .views import profile_list, profile, DashboardView, SignedOutView
+from . import views
 
 
 app_name = "pwitter"
 
 urlpatterns = [
-    path("", dashboard, name="dashboard"),
+    path("", login_required(DashboardView.as_view()), name="dashboard"),
     path('profile_list/', profile_list, name="profile_list"),
     path('profile/<int:pk>', profile, name="profile"),
+    path('signed-out/', SignedOutView.as_view(), name='sign-out'),
+    path('delete/<int:pk>', views.pweet_delete, name='pweet_delete'),
+    path('/<int:pk>', views.like_view, name='like_pweet'),
+    path('/reply/<int:pk>', views.reply_like_view, name='like_reply'),
+    path('register', views.register_request, name='register'),
 ]
