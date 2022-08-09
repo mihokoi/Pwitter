@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'pwitter',
     'crispy_forms',
-    'crispy_bulma',
+    'crispy_bulma'
+
 ]
 
 MIDDLEWARE = [
@@ -135,6 +136,9 @@ LOGOUT_REDIRECT_URL = '/accounts/login'
 MEDIA_ROOT = 'uploads/'
 MEDIA_URL = 'uploads/'
 
-DEFAULT_FILE_STORAGE = 'django_hashedfilenamestorage.storage.HashedFilenameFileSystemStorage'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = ("bulma",)
+
+CRISPY_TEMPLATE_PACK = "bulma"
 

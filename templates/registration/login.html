@@ -53,6 +53,7 @@
         </div>
         <input type="hidden" name="next" value="{{ next }}">
         <a href="{% url 'password_reset' %}">Lost password?</a>
+        <a href="{% url 'pwitter:register' %}">Need account?</a>
     </form>
 
     {# Assumes you setup the password_reset view in your URLconf #}

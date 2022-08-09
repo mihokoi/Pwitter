@@ -34,6 +34,7 @@
                                     {% endif %}
                                 </p>
                                 </div>
+                                {% if user.username == pweet.user.username %}
                                 <form action="{% url 'pwitter:pweet_delete' pweet.id %}" method="post">
                                     {% csrf_token %}
                                     <button class="button is-right">
@@ -42,7 +43,7 @@
                                         </span>
                                     </button>
                                 </form>
-
+                                {% endif %}
                             </div>
 
                             </div>
@@ -93,7 +94,16 @@
 
                                             <br>
                                             {{ reply.body }}
-                                            <small><a>Like</a> · <a>Reply</a></small>
+                                            <form action="{% url 'pwitter:like_reply' reply.pk%}" method="post">
+                                            {% csrf_token %}
+                                            <button  type="submit" class="button is-right" name="reply_pk"
+                                             value="{{ reply.pk }}">
+                                            <span class="icon is-small">
+                                            <i class="fas fa-solid fa-heart" aria-hidden="true"></i>
+                                            </span>
+                                            <p>{{ reply.likes.count }}</p>
+                                            </button>
+                                            </form>
                                         </p>
                                     </div>
                                 </div>

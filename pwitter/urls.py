@@ -13,5 +13,6 @@ urlpatterns = [
     path('signed-out/', SignedOutView.as_view(), name='sign-out'),
     path('delete/<int:pk>', views.pweet_delete, name='pweet_delete'),
     path('/<int:pk>', views.like_view, name='like_pweet'),
-    # path('login/', views.LoginView)
+    path('/reply/<int:pk>', views.reply_like_view, name='like_reply'),
+    path('register', views.register_request, name='register'),
 ]

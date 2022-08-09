@@ -19,7 +19,7 @@ class Pweet(models.Model):
     pweet_image = models.FileField(upload_to='pweet_media/',
                                   validators=[validate_file],
                                   blank=True)
-    likes = models.ManyToManyField(User, related_name='pweet_posts')
+    likes = models.ManyToManyField(User, related_name='pweet_posts', blank=True)
     def __str__(self):
         return (
             f"{self.user} "
@@ -34,6 +34,7 @@ class PweetReply(models.Model):
     body = models.CharField(max_length=140)
     created_at = models.DateTimeField(auto_now_add=True)
     pweet = models.ForeignKey(Pweet, on_delete=models.CASCADE, related_name='replies')
+    likes = models.ManyToManyField(User, related_name='pweet_replies', blank=True)
 
     def __str__(self):
         return (

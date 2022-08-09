@@ -1,29 +1,27 @@
-from django.contrib.auth import logout
-from django.contrib.auth.forms import PasswordResetForm
-from django.contrib.auth.models import User
-from django.contrib.auth.tokens import default_token_generator
-from django.core.mail import send_mail, BadHeaderError
-from django.db.models import Q
-from django.http import HttpRequest, HttpResponseRedirect, HttpResponse
-from django.template.loader import render_to_string
-from django.urls import reverse_lazy, reverse
+from django.contrib.auth import logout, login
+from django.http import HttpRequest, HttpResponseNotFound
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.forms import formset_factory
-from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_encode
 from django.views.generic import TemplateView
-from .models import Profile, Picture, Pweet
-from .forms import PweetForm
-from django.views.generic import View, ListView
+from .models import Profile, Picture, Pweet, PweetReply
+from .forms import PweetForm, NewUserForm
+from django.views.generic import View
+from django.contrib import messages
+
 
 def like_view(request, pk):
     if request.method == 'POST':
         pweet = get_object_or_404(Pweet, pk=pk)
-        print(pweet)
         pweet.likes.add(request.user)
-        print(pweet.likes.all())
         return redirect('/')
+    return render(request, 'dashboard.html')
+
+
+def reply_like_view(request, pk):
+    if request.method == 'POST':
+        reply = get_object_or_404(PweetReply, pk=pk)
+        reply.likes.add(request.user)
+        return redirect('pwitter:dashboard')
     return render(request, 'dashboard.html')
 
 
@@ -46,12 +44,15 @@ class DashboardView(View):
             return redirect('pwitter:dashboard')
         return render(request, self.template_name, {'form': form})
 
+@login_required
 def pweet_delete(request, pk):
     pweet = get_object_or_404(Pweet, pk=pk)
-    if request.method == 'POST':
-        pweet.delete()
-        return redirect('/')
-    return render(request, 'dashboard.html')
+    if request.user.username == pweet.user.username:
+        if request.method == 'POST':
+            pweet.delete()
+            return redirect('/')
+        return render(request, 'dashboard.html')
+
 
 
 @login_required
@@ -93,6 +94,19 @@ def profile(request, pk):
             current_user_profile.follows.remove(profile)
         current_user_profile.save()
     return render(request, "profile.html", {"profile": profile})
+
+
+def register_request(request):
+    if request.method == "POST":
+        form = NewUserForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, "Registration successful.")
+            return redirect('pwitter:dashboard')
+        messages.error(request, "Unsuccessful registration. Invalid information.")
+    form = NewUserForm()
+    return render(request=request, template_name='registration/register.html', context={"register_form":form})
 
 
 class SignedOutView(TemplateView):
