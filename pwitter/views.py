@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, HttpResponseNotFound, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.views.generic import TemplateView, ListView
+from django.views.generic import TemplateView, ListView, CreateView
 from .models import Profile, Picture, Pweet, PweetReply
 from .forms import PweetForm, NewUserForm, ChangeProfilepicForm, PweetReplyForm
 from django.views.generic import View
@@ -27,22 +27,8 @@ def reply_like_view(request, pk):
 
 
 
-
 class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = 'dashboard.html'
-
-    # def detail(self, request, id):
-    #     pweet = get_object_or_404(Pweet, id=id)
-    #     replies = pweet.replies.all()
-    #     return render(request, 'detail.html', {'pweet': pweet, 'replies': replies})
-    #
-    # def replyComment(self, request, id):
-    #     replies = PweetReply.objects.get(id=id)
-    #     if request.method == "POST":
-    #         replier_name = request.user
-    #         reply_body = request.POST.get('reply_body')
-    #
-    #         newReply = PweetReply(user=replier_name, reply_body=reply_body)
 
     def get(self, request, *args, **kwargs):
         pweet_form = PweetForm(request.POST or None)
@@ -62,11 +48,10 @@ class DashboardView(LoginRequiredMixin, TemplateView):
             return redirect('pwitter:dashboard')
         elif reply_form.is_valid():
             reply = reply_form.save(commit=False)
-            reply_form.user = request.user
-            # reply_form.pweet =
+            reply.user = self.request.user
             reply_form.save()
+            return redirect('pwitter:dashboard')
 
-            reply.save()
         print(request.POST)
         return render(request, self.template_name, {'pweet_form': pweet_form,
                                                     'reply_form': reply_form})

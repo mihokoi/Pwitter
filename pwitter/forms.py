@@ -18,7 +18,7 @@ class PweetReplyForm(forms.ModelForm):
 
     class Meta:
         model = PweetReply
-        exclude = ('created_at', 'likes')
+        exclude = ('user', 'created_at', 'likes')
 
 
 class ChangeProfilepicForm(forms.ModelForm):
