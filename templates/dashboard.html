@@ -73,6 +73,7 @@
                                     </a>
                                 </div>
                             </nav>
+                        <input class="input is-info" type="text" placeholder="Type your reply...">
                             {% for reply in pweet.replies.all %}
                                 <article class="media">
                                 <figure class="media-left">
@@ -105,6 +106,7 @@
                                             </button>
                                             </form>
                                         </p>
+                                        <input class="input is-info" type="text" placeholder="Type your reply...">
                                     </div>
                                 </div>
                                 </article>
@@ -124,7 +126,7 @@
         </a>
     </div>
     <div class="block">
-        <a href="{% url 'pwitter:profile' request.user.profile.id %}">
+        <a href="{% url 'pwitter:profile' request.user.profile.pk %}">
             <button class="button is-success is-light is-outlined is-fullwidth">
                 My Profile
             </button>

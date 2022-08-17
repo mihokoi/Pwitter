@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-^xh&zzp7=tbzz1jjk_f4gpaeq9xav7l5i*ar8u)fzr=qbc$kk^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -82,8 +82,12 @@ WSGI_APPLICATION = 'django_social.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'pwitter_db',
+        'USER': 'postgres',
+        'PASSWORD': 'Avarmal12',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 

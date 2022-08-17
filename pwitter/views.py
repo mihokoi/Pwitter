@@ -1,10 +1,11 @@
 from django.contrib.auth import logout, login
-from django.http import HttpRequest, HttpResponseNotFound
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpRequest, HttpResponseNotFound, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView
 from .models import Profile, Picture, Pweet, PweetReply
-from .forms import PweetForm, NewUserForm
+from .forms import PweetForm, NewUserForm, ChangeProfilepicForm
 from django.views.generic import View
 from django.contrib import messages
 
@@ -25,16 +26,16 @@ def reply_like_view(request, pk):
     return render(request, 'dashboard.html')
 
 
-class DashboardView(View):
+class DashboardView(LoginRequiredMixin, View):
     form_class = PweetForm
     template_name = 'dashboard.html'
 
     def get(self, request, *args, **kwargs):
-        form = self.form_class(request.POST or None)
+        form = PweetForm(request.POST or None)
         return render(request, self.template_name, {'form': form})
 
     def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST, request.FILES)
+        form = PweetForm(request.POST, request.FILES)
         if form.is_valid():
             pweet = form.save(commit=False)
             pweet.user = request.user
@@ -77,23 +78,96 @@ def profile_list(request):
     return render(request, "profile_list.html", {"profiles": profiles})
 
 
-@login_required
-def profile(request, pk):
-    if not hasattr(request.user, 'profile'):
-        missing_profile = Profile(user=request.user)
-        missing_profile.save()
+class ProfileDetail(LoginRequiredMixin, View):
+    template_name = 'profile.html'
 
-    profile = Profile.objects.get(pk=pk)
-    if request.method == "POST":
-        current_user_profile = request.user.profile
-        data = request.POST
-        action = data.get("follow")
-        if action == "follow":
-            current_user_profile.follows.add(profile)
-        elif action == "unfollow":
-            current_user_profile.follows.remove(profile)
-        current_user_profile.save()
-    return render(request, "profile.html", {"profile": profile})
+    def get_object(self):
+        try:
+            obj = Profile.objects.get(pk=self.kwargs['pk'])
+        except Profile.DoesNotExist:
+            raise Http404('Profile not found!')
+        return obj
+
+    def get_context_data(self, **kwargs):
+        kwargs['profile'] = self.get_object()
+        if 'change_profile_pic_form' not in kwargs:
+            kwargs['change_profile_pic_form'] = ChangeProfilepicForm()
+        # if 'follow_form' not in kwargs:
+        #     kwargs['follow_form'] = Profile.objects.get(pk=self.get_object().pk)
+        #     # kwargs['follow_form'] = ChangeProfileFollowForm()
+        # print(kwargs)
+        return kwargs
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, self.get_context_data())
+
+    def post(self, request, *args, **kwargs):
+        ctxt = {}
+
+        if 'follow' in request.POST:
+            profile_ = Profile.objects.get(pk=self.get_object().pk)
+            current_user_profile = request.user.profile
+            data = request.POST
+            action = data.get("follow")
+            if action == "follow":
+                current_user_profile.follows.add(profile_)
+            elif action == "unfollow":
+                current_user_profile.follows.remove(profile_)
+            current_user_profile.save()
+
+        # if 'follow_form' in request.POST:
+        #     change_profile_follow = ChangeProfileFollowForm(request.POST, instance=request.user.profile)
+        #     if change_profile_follow.is_valid():
+        #         change = change_profile_follow
+        #         change.follows.add
+
+        elif 'change_profile_pic_form' in request.POST:
+            change_profile_pic_form = ChangeProfilepicForm(request.POST, request.FILES, instance=request.user.profile)
+
+            if change_profile_pic_form.is_valid():
+                prof = change_profile_pic_form
+                prof.user_image = request.FILES
+                prof.save()
+
+
+            else:
+                ctxt['change_profile_pic_form'] = change_profile_pic_form
+        return render(request, self.template_name, self.get_context_data(**ctxt))
+
+
+
+
+# @login_required
+# def profile(request, pk):
+#     if not hasattr(request.user, 'profile'):
+#         missing_profile = Profile(user=request.user)
+#         missing_profile.save()
+#
+#     profile = Profile.objects.get(pk=pk)
+#     # if request.method == "POST" and "changeprofilepicform" in request.POST:
+#     #     form = ChangeProfilepicForm(request.POST)
+#     #     if form.is_valid():
+#     #         profile_ = form.save(commit=False)
+#     #         profile_.save()
+#     #         return redirect("pwitter:profile")
+#     #     else:
+#     #         return redirect("pwitter:profile")
+#     print(request.POST)
+#     if request.method == "POST":
+#         current_user_profile = request.user.profile
+#         data = request.POST
+#         print(data)
+#         print("kutaz")
+#         action = data.get("follow")
+#         if action == "follow":
+#             current_user_profile.follows.add(profile)
+#         elif action == "unfollow":
+#             print(data)
+#             current_user_profile.follows.remove(profile)
+#         current_user_profile.save()
+#     return render(request, "profile.html", {"profile": profile})
+
+
 
 
 def register_request(request):

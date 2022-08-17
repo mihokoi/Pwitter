@@ -1,10 +1,22 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
+from django.core.validators import FileExtensionValidator
 
-
-
-from .models import Pweet, Picture
+from .models import Pweet, Profile, PweetReply
 from django.contrib.auth.models import User
+
+class PweetReplyForm(forms.ModelForm):
+
+    class Meta:
+        pweet = PweetReply
+        fields = ('body',)
+
+class ChangeProfilepicForm(forms.ModelForm):
+    user_image = forms.FileField()
+
+    class Meta:
+        model = Profile
+        fields = ('user_image',)
 
 
 class NewUserForm(UserCreationForm):
@@ -23,9 +35,9 @@ class NewUserForm(UserCreationForm):
 
 
 class UserCreationForm(forms.ModelForm):
-    class meta:
+    class Meta:
         model = User
-        fields = ('email',)
+        fields = ('username', 'email',)
 
     def save(self, commit=True):
         user = super(UserCreationForm, self).save(commit=False)
@@ -45,17 +57,13 @@ class PweetForm(forms.ModelForm):
                            ),
                            label="",
                            )
+
     class Meta:
         model = Pweet
         exclude = ("user", "picture", "likes")
 
-
-
-class PictureForm(forms.ModelForm):
-
-    class Meta:
-        model = Picture
-        exclude = ('user',)
-
-
-
+# class PictureForm(forms.ModelForm):
+#
+#     class Meta:
+#         model = Picture
+#         exclude = ('user',)

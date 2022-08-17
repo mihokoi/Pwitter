@@ -32,7 +32,7 @@
                     <div class="content">
                         <strong>Logged as:</strong>
                         <br>
-                        <a href="{% url 'pwitter:profile' user.profile.id %}">
+                        <a href="{% url 'pwitter:profile' user.profile.pk %}">
                         <strong class="has-text-black">{{ user.profile.user }}</strong>
                         </a>
                     {% endif %}

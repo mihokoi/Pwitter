@@ -38,6 +38,13 @@
         </div>
         {% endfor %}
     </div>
+    {% if profile.user.username == user.username %}
+    <form method="post" enctype="multipart/form-data">>
+        {% csrf_token %}
+        {{ change_profile_pic_form }}
+        <button name="change_profile_pic_form" type="submit">Submit</button>
+    </form>
+    {% endif %}
     </div>
     </div>
     <div class="column is-one-third">
@@ -57,7 +64,7 @@
             {% for following in profile.follows.all %}
 
                 <li>
-                <a href="{% url 'pwitter:profile' following.id %}">
+                <a href="{% url 'pwitter:profile' following.pk %}">
                     {{ following }}
                 </a>
                 </li>
@@ -73,7 +80,7 @@
         <ul>
             {% for follower in profile.followed_by.all %}
             <li>
-                <a href="{% url 'pwitter:profile' follower.id %}">
+                <a href="{% url 'pwitter:profile' follower.pk %}">
                     {{ follower }}
                 </a>
             </li>

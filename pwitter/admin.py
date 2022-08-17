@@ -12,6 +12,7 @@ class PweetReplyInline(admin.StackedInline):
 
 
 class CustomUserAdmin(UserAdmin):
+
     add_form = UserCreationForm
 
     ordering = ("email",)
@@ -21,12 +22,11 @@ class CustomUserAdmin(UserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'password', 'first_name', 'last_name', 'is_superuser', 'is_staff', 'is_active')
+            'fields': ('username', 'email', 'password', 'first_name', 'last_name', 'is_superuser', 'is_staff', 'is_active')
         }),
     )
     filter_horizontal = ()
-    # model = User
-    # field = ["username"]
+
     inlines = [ProfileInline]
 
 class PweetAdmin(admin.ModelAdmin):
