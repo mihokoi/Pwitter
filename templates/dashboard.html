@@ -73,6 +73,7 @@
                                     </a>
                                 </div>
                             </nav>
+
                         <input class="input is-info" type="text" placeholder="Type your reply...">
                             {% for reply in pweet.replies.all %}
                                 <article class="media">
@@ -94,7 +95,7 @@
                                             <small>{{ reply.created_at }}</small>
 
                                             <br>
-                                            {{ reply.body }}
+                                            {{ reply.reply_body }}
                                             <form action="{% url 'pwitter:like_reply' reply.pk%}" method="post">
                                             {% csrf_token %}
                                             <button  type="submit" class="button is-right" name="reply_pk"
@@ -106,7 +107,14 @@
                                             </button>
                                             </form>
                                         </p>
-                                        <input class="input is-info" type="text" placeholder="Type your reply...">
+                                        <form method="post">
+                                        {{ reply_form.as_p }}
+                                        {% csrf_token %}
+{#                                            {{ reply_form }}#}
+
+{#                                        <input class="input is-info" name="reply_body" maxlength="140" required="" id="id_reply_body" placeholder="Type your reply...">#}
+                                        <input class="btn btn-primary" type="submit">
+                                        </form>
                                     </div>
                                 </div>
                                 </article>
@@ -144,9 +152,9 @@
             <h2 class="title is-2">Add a Pweet</h2>
         </div>
         <div class="block">
-    <form method="post" enctype="multipart/form-data">
+    <form name="pweet_form" method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form }}
+        {{ pweet_form }}
         <button class="button is-success is-fullwidth is-medium mt-5"
                 type="submit">Pweet
         </button>

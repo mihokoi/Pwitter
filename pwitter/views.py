@@ -3,9 +3,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, HttpResponseNotFound, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, ListView
 from .models import Profile, Picture, Pweet, PweetReply
-from .forms import PweetForm, NewUserForm, ChangeProfilepicForm
+from .forms import PweetForm, NewUserForm, ChangeProfilepicForm, PweetReplyForm
 from django.views.generic import View
 from django.contrib import messages
 
@@ -26,24 +26,50 @@ def reply_like_view(request, pk):
     return render(request, 'dashboard.html')
 
 
-class DashboardView(LoginRequiredMixin, View):
-    form_class = PweetForm
+
+
+class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = 'dashboard.html'
 
+    # def detail(self, request, id):
+    #     pweet = get_object_or_404(Pweet, id=id)
+    #     replies = pweet.replies.all()
+    #     return render(request, 'detail.html', {'pweet': pweet, 'replies': replies})
+    #
+    # def replyComment(self, request, id):
+    #     replies = PweetReply.objects.get(id=id)
+    #     if request.method == "POST":
+    #         replier_name = request.user
+    #         reply_body = request.POST.get('reply_body')
+    #
+    #         newReply = PweetReply(user=replier_name, reply_body=reply_body)
+
     def get(self, request, *args, **kwargs):
-        form = PweetForm(request.POST or None)
-        return render(request, self.template_name, {'form': form})
+        pweet_form = PweetForm(request.POST or None)
+        reply_form = PweetReplyForm(request.POST or None)
+        return render(request, self.template_name, {'pweet_form': pweet_form,
+                                                    'reply_form': reply_form})
 
     def post(self, request, *args, **kwargs):
-        form = PweetForm(request.POST, request.FILES)
-        if form.is_valid():
-            pweet = form.save(commit=False)
+        pweet_form = PweetForm(request.POST, request.FILES)
+        reply_form = PweetReplyForm(request.POST)
+        if pweet_form.is_valid():
+            pweet = pweet_form.save(commit=False)
             pweet.user = request.user
             pweet.save()
             image = Picture(user=request.user, picture=pweet.pweet_image, pweet_id=pweet.pk)
             image.save()
             return redirect('pwitter:dashboard')
-        return render(request, self.template_name, {'form': form})
+        elif reply_form.is_valid():
+            reply = reply_form.save(commit=False)
+            reply_form.user = request.user
+            # reply_form.pweet =
+            reply_form.save()
+
+            reply.save()
+        print(request.POST)
+        return render(request, self.template_name, {'pweet_form': pweet_form,
+                                                    'reply_form': reply_form})
 
 @login_required
 def pweet_delete(request, pk):
@@ -56,20 +82,20 @@ def pweet_delete(request, pk):
 
 
 
-@login_required
-def dashboard(request):
-    if request.method =="GET":
-        form = PweetForm(request.POST or None)
-    if request.method == "POST":
-        form = PweetForm(request.POST or None)
-        if form.is_valid():
-            pweet = form.save(commit=False)
-            pweet.user = request.user
-            pweet.save()
-            return redirect("pwitter:dashboard")
-        else:
-            return redirect("pwitter:dashboard")
-    return render(request, "dashboard.html", {"form": form})
+# @login_required
+# def dashboard(request):
+#     if request.method =="GET":
+#         form = PweetForm(request.POST or None)
+#     if request.method == "POST":
+#         form = PweetForm(request.POST or None)
+#         if form.is_valid():
+#             pweet = form.save(commit=False)
+#             pweet.user = request.user
+#             pweet.save()
+#             return redirect("pwitter:dashboard")
+#         else:
+#             return redirect("pwitter:dashboard")
+#     return render(request, "dashboard.html", {"form": form})
 
 
 @login_required

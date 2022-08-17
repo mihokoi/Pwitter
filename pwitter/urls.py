@@ -7,7 +7,7 @@ from . import views
 app_name = "pwitter"
 
 urlpatterns = [
-    path("", login_required(DashboardView.as_view()), name="dashboard"),
+    path("", DashboardView.as_view(), name="dashboard"),
     path('profile_list/', profile_list, name="profile_list"),
     # path('profile/<int:pk>', views.profile, name="profile"),
     path('profile/<int:pk>', ProfileDetail.as_view(), name="profile"),

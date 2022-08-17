@@ -32,7 +32,7 @@ class Pweet(models.Model):
 class PweetReply(models.Model):
     user = models.ForeignKey(User, related_name="pweets_reply",
                              on_delete=models.DO_NOTHING)
-    body = models.CharField(max_length=140)
+    reply_body = models.CharField(max_length=140)
     created_at = models.DateTimeField(auto_now_add=True)
     pweet = models.ForeignKey(Pweet, on_delete=models.CASCADE, related_name='replies')
     likes = models.ManyToManyField(User, related_name='pweet_replies', blank=True)
@@ -41,7 +41,7 @@ class PweetReply(models.Model):
         return (
             f"{self.user} "
             f"({self.created_at:%Y-%m-%d %H:%M}): "
-            f"{self.body[:30]}..."
+            f"{self.reply_body[:30]}..."
         )
 
 

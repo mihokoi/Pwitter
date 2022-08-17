@@ -6,10 +6,20 @@ from .models import Pweet, Profile, PweetReply
 from django.contrib.auth.models import User
 
 class PweetReplyForm(forms.ModelForm):
+    reply_body = forms.CharField(required=True,
+                           widget=forms.widgets.Textarea(
+                               attrs={
+                                   "placeholder": "Reply...",
+                                   "class": "textarea is-success is-small",
+                               }
+                           ),
+                           label="",
+                           )
 
     class Meta:
-        pweet = PweetReply
-        fields = ('body',)
+        model = PweetReply
+        exclude = ('created_at', 'likes')
+
 
 class ChangeProfilepicForm(forms.ModelForm):
     user_image = forms.FileField()
