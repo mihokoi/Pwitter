@@ -103,8 +103,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'pwitter_db',
-        'USER': 'postgres',
-        'PASSWORD': 'Avarmal12',
+        'USER': 'mihokoi12',
+        'PASSWORD': 'Comiket12',
         'HOST': 'localhost',
         'PORT': '5432',
     }
