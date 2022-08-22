@@ -73,8 +73,14 @@
                                     </a>
                                 </div>
                             </nav>
+                            <form method="post">
+                                        {{ reply_form.as_p }}
+                                        {% csrf_token %}
+{#                                        <input class="input is-info" name="reply_body" maxlength="140" required="" id="id_reply_body" placeholder="Type your reply...">#}
+                                        <input class="btn btn-primary" type="submit">
+                                        </form>
 
-                        <input class="input is-info" type="text" placeholder="Type your reply...">
+
                             {% for reply in pweet.replies.all %}
                                 <article class="media">
                                 <figure class="media-left">
@@ -107,12 +113,7 @@
                                             </button>
                                             </form>
                                         </p>
-                                        <form method="post">
-                                        {{ reply_form.as_p }}
-                                        {% csrf_token %}
-{#                                        <input class="input is-info" name="reply_body" maxlength="140" required="" id="id_reply_body" placeholder="Type your reply...">#}
-                                        <input class="btn btn-primary" type="submit">
-                                        </form>
+
                                     </div>
                                 </div>
                                 </article>

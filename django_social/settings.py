@@ -16,13 +16,13 @@ import os
 
 env = environ.Env()
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('DJANGO_SECRET_KEY', default='django-insecure-$lko+#jpt#ehi5=ms9(6s%&6fsg%r2ag2xu_2zj1ibsj$pckud')
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env.bool("DJANGO_DEBUG", True)
-
-ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=[])
+# # SECURITY WARNING: keep the secret key used in production secret!
+# SECRET_KEY = env('DJANGO_SECRET_KEY', default='django-insecure-$lko+#jpt#ehi5=ms9(6s%&6fsg%r2ag2xu_2zj1ibsj$pckud')
+#
+# # SECURITY WARNING: don't run with debug turned on in production!
+# DEBUG = env.bool("DJANGO_DEBUG", True)
+#
+# ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=[])
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -31,13 +31,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
-# # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = 'django-insecure-^xh&zzp7=tbzz1jjk_f4gpaeq9xav7l5i*ar8u)fzr=qbc$kk^'
-#
-# # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
-#
-# ALLOWED_HOSTS = ['*']
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = 'django-insecure-^xh&zzp7=tbzz1jjk_f4gpaeq9xav7l5i*ar8u)fzr=qbc$kk^'
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
+
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -49,9 +49,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'pwitter',
     'crispy_forms',
-    'crispy_bulma'
+    'crispy_bulma',
+    'allauth_ui',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'widget_tweaks',
 
 ]
 
@@ -70,7 +77,8 @@ ROOT_URLCONF = 'django_social.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
+        # 'DIRS': [BASE_DIR / 'templates']
+        'DIRS': [os.path.join(BASE_DIR, 'templates'), os.path.join(BASE_DIR, 'templates', 'allauth')]
         ,
         'APP_DIRS': True,
         'OPTIONS': {
@@ -156,4 +164,25 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 CRISPY_ALLOWED_TEMPLATE_PACKS = ("bulma",)
 
 CRISPY_TEMPLATE_PACK = "bulma"
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend'
+]
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}
+
+SITE_ID = 2
+
+SOCIALACCOUNT_LOGIN_ON_GET = True
 

@@ -27,6 +27,9 @@
                             @{{ profile.user.username|lower }}
                         </p>
                     </div>
+
+
+
                 </div>
             </div>
         </a>
@@ -35,6 +38,31 @@
     </div>
 {% endfor %}
 </div>
+    <div class="column is-one-third">
+<div class="block">
+        <a href="{% url 'pwitter:profile_list' %}">
+            <button class="button is-dark is-outlined is-fullwidth">
+                All Profiles
+            </button>
+        </a>
+    </div>
+    <div class="block">
+        <a href="{% url 'pwitter:profile' request.user.profile.pk %}">
+            <button class="button is-success is-light is-outlined is-fullwidth">
+                My Profile
+            </button>
+        </a>
+    </div>
+    <div class="block">
+        <a href="{% url 'pwitter:sign-out' %}">
+            <button class="button is-danger is-light is-outlined is-fullwidth">
+                Logout
+            </button>
+        </a>
+    </div>
+</div>
+
+
 
 
 {% endblock content %}
