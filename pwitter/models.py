@@ -4,9 +4,9 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from pwitter.storage_backends import PublicMediaStorage
 
 
-# from .validators import FileValidator
 from django.core.validators import FileExtensionValidator
 
 
@@ -15,11 +15,11 @@ class Pweet(models.Model):
                              on_delete=models.CASCADE)
     body = models.CharField(max_length=140)
     created_at = models.DateTimeField(auto_now_add=True)
-    # validate_file = FileValidator(max_size=1024 * 1000,
-    #                               content_types=('image/jpeg', 'image/png'))
     pweet_image = models.FileField(upload_to='pweet_media/',
                                   validators=[FileExtensionValidator(allowed_extensions=['jpg', 'png'])],
-                                  blank=True)
+                                  blank=True,
+                                   storage=PublicMediaStorage())
+
     likes = models.ManyToManyField(User, related_name='pweet_posts', blank=True)
     def __str__(self):
         return (
@@ -48,11 +48,10 @@ class PweetReply(models.Model):
 
 class Picture(models.Model):
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
-    # validate_file = FileValidator(max_size=1024 * 1000,
-    #                                   content_types=('image/jpeg', 'image/png'))
     picture = models.FileField(upload_to='pweet_media/',
                                    validators=[FileExtensionValidator(allowed_extensions=['jpg', 'png'])],
-                                   blank=True)
+                                   blank=True,
+                               storage=PublicMediaStorage())
     pweet = models.OneToOneField(Pweet, on_delete=models.CASCADE, null=True)
 
 
@@ -61,7 +60,9 @@ class Profile(models.Model):
 
     user_image = models.FileField(upload_to='profile_pictures/',
                                   validators=[FileExtensionValidator(allowed_extensions=['jpg', 'png'])],
-                                  blank=True)
+                                  blank=True,
+                                  storage=PublicMediaStorage()
+                                  )
     follows = models.ManyToManyField(
         "self",
         related_name="followed_by",

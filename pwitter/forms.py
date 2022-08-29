@@ -1,7 +1,5 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from django.core.validators import FileExtensionValidator
-
 from .models import Pweet, Profile, PweetReply
 from django.contrib.auth.models import User
 
@@ -72,8 +70,3 @@ class PweetForm(forms.ModelForm):
         model = Pweet
         exclude = ("user", "picture", "likes")
 
-# class PictureForm(forms.ModelForm):
-#
-#     class Meta:
-#         model = Picture
-#         exclude = ('user',)
