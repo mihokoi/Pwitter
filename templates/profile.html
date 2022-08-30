@@ -31,7 +31,7 @@
         {% endfor %}
         {% for pweet_reply in profile.user.pweets_reply.all %}
         <div class="box">
-        {{ pweet_reply.body }}
+        {{ pweet_reply.reply_body }}
         <span class="is-small has-text-grey-light">
             {{ pweet_reply.created_at }}
         </span>
