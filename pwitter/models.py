@@ -89,22 +89,22 @@ def auto_delete_file_on_delete(sender, instance, **kwargs):
 
 
 
-@receiver(models.signals.pre_save, sender=Profile)
-def auto_delete_file_on_change(sender, instance, **kwargs):
-    if not instance.pk:
-        return False
-    try:
-        old_picture = Profile.objects.get(pk=instance.pk).user_image
-    except Profile.DoesNotExist:
-        return False
-
-    new_picture = instance.user_image
-    if not old_picture == new_picture:
-        try:
-            if os.path.isfile(old_picture.path):
-                os.remove(old_picture.path)
-        except ValueError:
-            return False
+# @receiver(models.signals.pre_save, sender=Profile)
+# def auto_delete_file_on_change(sender, instance, **kwargs):
+#     if not instance.pk:
+#         return False
+#     try:
+#         old_picture = Profile.objects.get(pk=instance.pk).user_image
+#     except Profile.DoesNotExist:
+#         return False
+#
+#     new_picture = instance.user_image
+#     if not old_picture == new_picture:
+#         try:
+#             if os.path.isfile(old_picture.path):
+#                 os.remove(old_picture.path)
+#         except ValueError:
+#             return False
 
 
 
